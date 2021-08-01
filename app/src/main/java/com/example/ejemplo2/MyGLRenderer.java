@@ -11,7 +11,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import java.util.*;
 
-
 public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     /** The refresh rate, in frames per second. */
@@ -59,6 +58,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
                 // get next next boolean value
                 mEcube[i][j].setAlive(randomno.nextBoolean());
+
+                // initializing nexstate with the current state
+                mEcube[i][j].setNextState(mEcube[i][j].isAlive());
             }
         }
 //        mEcube[1] = new EasyCube(1.5f, 1.0f, -0.25f, 0.5f);
@@ -86,42 +88,59 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     }
 
     public void updateCubes() {
-        int w = mEcube.length;
-        int h = mEcube[0].length;
+        int filas = mEcube.length;
+        int columnas = mEcube[0].length;
+        int neighbours;
         for (int i = 0; i < mEcube.length; i++) {
             for (int j = 0; j < mEcube[0].length; j++) {
-                int neighbours = 0;
+                neighbours = 0;
+
                 if (i - 1 > 0) {
                     if (mEcube[i - 1][j].isAlive())
                         neighbours++;
                     if (j - 1 > 0 && mEcube[i - 1][j - 1].isAlive())
                         neighbours++;
-                    if (j + 1 < h && mEcube[i][j + 1].isAlive())
+                    if (j + 1 < columnas && mEcube[i - 1][j + 1].isAlive())
                         neighbours++;
                 }
-                if (i + 1 < w) {
+
+                if (i + 1 < filas) {
                     if (mEcube[i + 1][j].isAlive())
                         neighbours++;
                     if (j - 1 > 0 && mEcube[i + 1][j - 1].isAlive())
                         neighbours++;
-                    if (j + 1 < h && mEcube[i + 1][j + 1].isAlive())
+                    if (j + 1 < columnas && mEcube[i + 1][j + 1].isAlive())
                         neighbours++;
                 }
-                if (j + 1 < h && mEcube[i][j + 1].isAlive())
+
+                if (j + 1 < columnas && mEcube[i][j + 1].isAlive())
                     neighbours++;
                 if (j - 1 > 0 && mEcube[i][j - 1].isAlive())
                     neighbours++;
-                if (neighbours == 3 && !mEcube[i][j].isAlive())
-                    mEcube[i][j].setNextState(true);
-                else if ((neighbours < 2 || neighbours > 3) && mEcube[i][j].isAlive())
-                    mEcube[i][j].setNextState(false);
+
+                if (mEcube[i][j].isAlive())
+                {
+                    if (neighbours < 2 || neighbours > 3)
+                        mEcube[i][j].setNextState(false);
+                    else
+                        mEcube[i][j].setNextState(true);
+                }
+                else {
+                    if (neighbours == 3)
+                        mEcube[i][j].setNextState(true);
+                    else
+                        mEcube[i][j].setNextState(false);
+                }
+
             }
         }
+
         for (int i =0; i< mEcube.length; i++){
             for (int j=0; j< mEcube[0].length; j++){
                 mEcube[i][j].updateState();
             }
         }
+
     }
 
     @Override

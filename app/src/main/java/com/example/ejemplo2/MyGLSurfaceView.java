@@ -14,7 +14,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         setEGLContextClientVersion(2);
         mRenderer = new MyGLRenderer();
         setRenderer(mRenderer);
-//        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+//      setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
 
     private float mPreviousX;
